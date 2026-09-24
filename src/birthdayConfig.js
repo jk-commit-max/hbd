@@ -215,7 +215,7 @@ export const birthdayConfig = {
     birthdayHeadline: "HAPPY BIRTHDAY,",
     birthdayMessage: [
       "I hope this year brings you everything you truly deserve — pure happiness, deep peace, exciting milestones, and endless reasons to smile every single morning.",
-      "You are genuinely one of the sweetest, kindest people I know, and I am so grateful to go through life with you as my cousin.",
+      "You are genuinely one of the sweetest, kindest people I know.",
       "Keep shining, keep laughing, and never stop being your wonderful self. ❤️",
     ],
     buttonText: "Wait… There's One More Thing →",

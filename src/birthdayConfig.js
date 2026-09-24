@@ -231,12 +231,12 @@ export const birthdayConfig = {
     photo: "/images/surprise-photo.jpg",
     photoCaption: "Such a sweet person ❤️",
     letterBody: [
-      "Such a sweet person — with the kindest heart and the warmest smile.",
-      "No matter how busy life gets, how far we travel, or how much older we get, you will always be one of the truest anchors in my life.",
-      "Thank you for being someone I can always count on, laugh with till my stomach hurts, and be completely myself around.",
-      "Have the most magical, joyful birthday. You deserve the entire world today and always. ❤️",
+      "Happy Birthday, Bava! ✨",
+      "May your days be filled with dreams worth chasing, your path with moments worth remembering, and your journey with reasons to keep moving forward.",
+      "May every year bring you closer to the life you’ve imagined.",
+      "Keep shining, keep growing, and let your story unfold beautifully. ❤️🎂"
     ],
-    signature: "Made with all my love ❤️, by your cousin",
+    signature: "",
     replayButtonText: "Replay the Birthday Story ↻",
   },
 };

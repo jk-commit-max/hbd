@@ -42,7 +42,7 @@ export default function Step5Quiz({ onCompleteQuiz }) {
       playPop(false);
       setShakeIndex(optIdx);
       setSelectedOption(optIdx);
-      setWrongMessage("❌ Sweet, but definitely NOT the sweetest! Pick the real legend! 😉");
+      setWrongMessage("❌ Sweet, but definitely NOT the sweetest! 😉");
 
       // Reset shake animation after 450ms so it can re-trigger if needed
       setTimeout(() => {

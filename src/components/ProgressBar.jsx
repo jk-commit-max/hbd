@@ -14,8 +14,8 @@ const RIDER_MESSAGES = [
   "Full throttle! ⚡",
   "Cruising in style! 😎",
   "Quiz time boost! 🚀",
-  "Cake in sight! 🎂",
   "Cake reached! 🏆🎉",
+  "Time for a surprise! 🎁",
 ];
 
 export default function ProgressBar({
@@ -28,11 +28,11 @@ export default function ProgressBar({
   // Calculate motorcycle progress along track (2% to ~78% so front wheel reaches cake at 88%)
   const riderPosition = useMemo(() => {
     if (currentStep <= 1) return 2;
-    if (currentStep >= totalSteps) return 78;
+    if (currentStep >= 5) return 78; // Reach the cake at Make a Wish
     // Map intermediate steps smoothly
-    const ratio = (currentStep - 1) / (totalSteps - 1);
+    const ratio = (currentStep - 1) / (5 - 1);
     return Math.min(78, 2 + ratio * 76);
-  }, [currentStep, totalSteps]);
+  }, [currentStep]);
 
   const hasReachedCake = currentStep >= 5;
 

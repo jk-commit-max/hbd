@@ -228,7 +228,7 @@ export const birthdayConfig = {
     buttonPrompt: "Open Your Surprise 🎁",
     envelopeSeal: "💌",
     letterTitle: "A Note from the Heart",
-    photo: "/images/cousin-sweet.jpg",
+    photo: "/images/surprise-photo.jpg",
     photoCaption: "Such a sweet person ❤️",
     letterBody: [
       "Such a sweet person — with the kindest heart and the warmest smile.",

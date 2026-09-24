@@ -45,7 +45,7 @@ export const birthdayConfig = {
         badge: "Special Address",
         quote: "Mitron! Aaj Sai Barath ka birthday hai. The entire nation is proud of your sweetness. Bhaiyo aur behno, aaj cake par zero percent GST!",
         image: "/images/legend-modi.jpg",
-        objectPosition: "center center",
+        objectPosition: "center 15%",
         accent: "linear-gradient(135deg, #FF9933 0%, #138808 100%)",
       },
       {
@@ -75,7 +75,7 @@ export const birthdayConfig = {
         badge: "",
         quote: "Such a sweet person",
         image: "/images/cousin-sweet.jpg",
-        objectPosition: "center center",
+        objectPosition: "center 15%",
         accent: "linear-gradient(135deg, #FF6B6B 0%, #FFA07A 100%)",
       },
     ],

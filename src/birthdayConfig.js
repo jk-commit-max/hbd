@@ -236,7 +236,7 @@ export const birthdayConfig = {
       "May every year bring you closer to the life you’ve imagined.",
       "Keep shining, keep growing, and let your story unfold beautifully. ❤️🎂"
     ],
-    signature: "",
+    signature: "Made with lots of love ❤️",
     replayButtonText: "Replay the Birthday Story ↻",
   },
 };

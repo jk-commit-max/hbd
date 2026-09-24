@@ -58,7 +58,7 @@ You can customize:
 
 1. Open a terminal in the project directory:
    ```bash
-   cd "C:\Users\jugan\.gemini\antigravity-ide\scratch\birthday-story"
+   
    ```
 
 2. Install dependencies (already installed):

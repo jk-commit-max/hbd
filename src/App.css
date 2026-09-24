@@ -832,7 +832,7 @@
   line-height: 1.4;
   color: var(--text-secondary);
   font-style: normal;
-  margin-top: auto;
+  margin-top: 4px;
 }
 
 .carousel-nav-arrows {

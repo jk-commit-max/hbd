@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="vidBg1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF512F"/>
+      <stop offset="100%" stop-color="#DD2476"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="400" rx="20" fill="url(#vidBg1)"/>
+  <circle cx="300" cy="180" r="50" fill="rgba(255,255,255,0.25)"/>
+  <polygon points="290,160 320,180 290,200" fill="#FFFFFF"/>
+  <rect x="180" y="270" width="240" height="36" rx="18" fill="rgba(0,0,0,0.4)"/>
+  <text x="300" y="293" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">📹 EXHIBIT 1 • 0:14</text>
+  <text x="300" y="340" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="rgba(255,255,255,0.85)" text-anchor="middle">Tap to play / replace with funny-clip-1.mp4</text>
+</svg>

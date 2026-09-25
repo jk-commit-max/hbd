@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { birthdayConfig } from "../birthdayConfig";
 import { playCandleBlow, playCelebrationFanfare } from "../utils/audio";
 import { confetti } from "../utils/confetti";
@@ -9,8 +9,112 @@ export default function Step6Wish({ onNext }) {
   const [isBlowing, setIsBlowing] = useState(false);
   const [showFlash, setShowFlash] = useState(false);
 
+  // Microphone detection state
+  const [micState, setMicState] = useState("idle"); // 'idle' | 'listening' | 'denied' | 'unsupported'
+  const [blowLevel, setBlowLevel] = useState(0); // 0.0 to 1.0
+
+  const audioContextRef = useRef(null);
+  const analyserRef = useRef(null);
+  const micStreamRef = useRef(null);
+  const animFrameRef = useRef(null);
+
+  const stopMicrophone = () => {
+    if (animFrameRef.current) {
+      cancelAnimationFrame(animFrameRef.current);
+      animFrameRef.current = null;
+    }
+    if (micStreamRef.current) {
+      micStreamRef.current.getTracks().forEach((track) => track.stop());
+      micStreamRef.current = null;
+    }
+    if (audioContextRef.current && audioContextRef.current.state !== "closed") {
+      audioContextRef.current.close().catch(() => {});
+      audioContextRef.current = null;
+    }
+    setBlowLevel(0);
+  };
+
+  // Safe cleanup when leaving or when blown out
+  useEffect(() => {
+    return () => {
+      stopMicrophone();
+    };
+  }, []);
+
+  const startMicrophone = async () => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setMicState("unsupported");
+      return;
+    }
+
+    try {
+      // Disable echo cancellation & noise suppression to capture raw breath wind turbulence
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: false,
+          noiseSuppression: false,
+          autoGainControl: false,
+        },
+      });
+
+      micStreamRef.current = stream;
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioCtx();
+      audioContextRef.current = ctx;
+
+      const source = ctx.createMediaStreamSource(stream);
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 256;
+      analyser.smoothingTimeConstant = 0.25;
+      source.connect(analyser);
+      analyserRef.current = analyser;
+
+      setMicState("listening");
+
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+      let sustainedBlow = 0;
+
+      const detectBlow = () => {
+        if (!analyserRef.current) return;
+        analyser.getByteFrequencyData(dataArray);
+
+        // Direct breath on the capsule creates strong low-frequency acoustic saturation (bins 1 to 10)
+        let lowEnergy = 0;
+        for (let i = 1; i <= 10; i++) {
+          lowEnergy += dataArray[i];
+        }
+        const avgLow = lowEnergy / 10;
+
+        // Threshold: Ambient room noise is ~10-40, blowing hits 80-220
+        const level = Math.min(1, Math.max(0, (avgLow - 45) / 120));
+        setBlowLevel(level);
+
+        // Require sustained firm breath for ~150ms to extinguish (prevents false triggers)
+        if (level > 0.6) {
+          sustainedBlow++;
+          if (sustainedBlow >= 4) {
+            handleBlowCandle();
+            stopMicrophone();
+            return;
+          }
+        } else {
+          sustainedBlow = Math.max(0, sustainedBlow - 1);
+        }
+
+        animFrameRef.current = requestAnimationFrame(detectBlow);
+      };
+
+      detectBlow();
+    } catch (err) {
+      console.warn("Microphone access denied:", err);
+      setMicState("denied");
+    }
+  };
+
   const handleBlowCandle = () => {
     if (isBlownOut || isBlowing) return;
+    stopMicrophone();
 
     setIsBlowing(true);
     playCandleBlow();
@@ -68,9 +172,15 @@ export default function Step6Wish({ onNext }) {
             }}
           >
             {/* Ambient flame halo glow */}
+            {/* Ambient flame halo glow */}
             {!isBlownOut && (
               <div
-                className={`candle-ambient-glow ${isBlowing ? "flicker-heavy" : "flicker-gentle"}`}
+                className={`candle-ambient-glow ${isBlowing ? "flicker-heavy" : (blowLevel > 0.15 ? "flicker-heavy" : "flicker-gentle")}`}
+                style={{
+                  opacity: Math.max(0.15, 1 - blowLevel * 0.75),
+                  transform: `scale(${Math.max(0.4, 1 - blowLevel * 0.5)})`,
+                  transition: "all 0.08s ease-out",
+                }}
                 aria-hidden="true"
               />
             )}
@@ -177,7 +287,23 @@ export default function Step6Wish({ onNext }) {
 
                 {/* Flame (visible when lit) */}
                 {!isBlownOut && (
-                  <g className={`cake-flame-group ${isBlowing ? "flame-flickering" : "flame-dancing"}`}>
+                  <g
+                    className={`cake-flame-group ${
+                      isBlowing
+                        ? "flame-flickering"
+                        : blowLevel > 0.12
+                        ? "flame-wavering"
+                        : "flame-dancing"
+                    }`}
+                    style={{
+                      transformOrigin: "160px 46px",
+                      transform:
+                        blowLevel > 0.08
+                          ? `scale(${Math.max(0.35, 1 - blowLevel * 0.55)}) rotate(${blowLevel * 24}deg)`
+                          : undefined,
+                      transition: "transform 0.06s ease-out",
+                    }}
+                  >
                     <path
                       d="M 160 14 C 150 28, 148 40, 160 46 C 172 40, 170 28, 160 14 Z"
                       fill="url(#flameInnerGrad)"
@@ -210,12 +336,57 @@ export default function Step6Wish({ onNext }) {
               </svg>
             </div>
 
-            {/* Instruction prompt below the cake */}
-            <div className="candle-tap-prompt">
+            {/* Interactive Microphone & Tap Controls */}
+            <div className="candle-interaction-controls" onClick={(e) => e.stopPropagation()}>
               {!isBlownOut ? (
-                <p className="candle-instruction pulse-subtle">
-                  {wishSection.candleInstruction}
-                </p>
+                <>
+                  {micState === "idle" && (
+                    <button
+                      type="button"
+                      className="mic-action-btn glow-subtle"
+                      onClick={startMicrophone}
+                      aria-label="Blow candle using microphone"
+                    >
+                      <span className="mic-btn-icon">🎙️</span>
+                      <span className="mic-btn-text">Blow with Phone Mic</span>
+                    </button>
+                  )}
+
+                  {micState === "listening" && (
+                    <div className="mic-live-banner">
+                      <div className="mic-live-header">
+                        <span className="mic-live-pulse-dot" />
+                        <span className="mic-live-title">
+                          {blowLevel > 0.35 ? "Blowing strong! Keep going! 🌬️" : "Listening… Blow into your mic! 🌬️"}
+                        </span>
+                      </div>
+                      <div className="mic-meter-track" title="Breath intensity">
+                        <div
+                          className="mic-meter-fill"
+                          style={{ width: `${Math.round(blowLevel * 100)}%` }}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {micState === "denied" && (
+                    <p className="mic-fallback-note">
+                      Mic not granted — simply tap flame to blow! 🕯️
+                    </p>
+                  )}
+
+                  {micState === "unsupported" && (
+                    <p className="mic-fallback-note">
+                      Mic not supported — simply tap flame to blow! 🕯️
+                    </p>
+                  )}
+
+                  <p className="candle-instruction pulse-subtle">
+                    {micState === "listening"
+                      ? "Or tap the candle flame anytime to extinguish"
+                      : "Or simply tap the candle flame 🕯️"}
+                  </p>
+                </>
               ) : (
                 <p className="candle-wish-made animate-fade-in">
                   ✨ Your wish is officially locked in! ✨

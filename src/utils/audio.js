@@ -151,3 +151,78 @@ export function playCelebrationFanfare() {
     osc.stop(noteStart + 0.66);
   });
 }
+
+// Shutter / camera snap sound for flipping memories
+export function playCameraClick() {
+  if (isMuted) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  const now = ctx.currentTime;
+  
+  [0, 0.05].forEach((delay) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(1200, now + delay);
+    osc.frequency.exponentialRampToValueAtTime(300, now + delay + 0.035);
+    gain.gain.setValueAtTime(0.06, now + delay);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + delay + 0.04);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now + delay);
+    osc.stop(now + delay + 0.045);
+  });
+}
+
+// Gentle heart pop sound for reacting to memories
+export function playHeartPop() {
+  if (isMuted) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  const now = ctx.currentTime;
+
+  const notes = [659.25, 880]; // E5 -> A5
+  notes.forEach((freq, i) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const start = now + i * 0.06;
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(freq, start);
+    gain.gain.setValueAtTime(0.08, start);
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.22);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(start);
+    osc.stop(start + 0.23);
+  });
+}
+
+// Fast, lightweight motorcycle engine throttle rev (450ms)
+export function playMotorcycleRev() {
+  if (isMuted) return;
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = "triangle";
+    osc.frequency.setValueAtTime(110, now);
+    osc.frequency.exponentialRampToValueAtTime(260, now + 0.15);
+    osc.frequency.exponentialRampToValueAtTime(380, now + 0.42);
+
+    gain.gain.setValueAtTime(0.08, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.46);
+  } catch (e) {
+    // Non-blocking fail-safe
+  }
+}
+

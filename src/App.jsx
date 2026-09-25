@@ -7,12 +7,13 @@ import Step1Welcome from "./components/Step1Welcome";
 import Step2Legends from "./components/Step2Legends";
 import Step3Reasons from "./components/Step3Reasons";
 import Step5Quiz from "./components/Step5Quiz";
+import Step5Memories from "./components/Step5Memories";
 import Step6Wish from "./components/Step6Wish";
 import Step7Surprise from "./components/Step7Surprise";
 import { playChime, toggleAudioMute, getAudioMuted } from "./utils/audio";
 import "./App.css";
 
-const TOTAL_STEPS = 6;
+const TOTAL_STEPS = 7;
 
 export default function App() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -61,7 +62,7 @@ export default function App() {
     const handleKeyDown = (e) => {
       if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
       if (e.key === "ArrowRight") {
-        if (currentStep !== 1 && currentStep !== 4 && currentStep !== 5 && currentStep !== 6) {
+        if (currentStep !== 1 && currentStep !== 4 && currentStep !== 6 && currentStep !== 7) {
           handleNext();
         }
       } else if (e.key === "ArrowLeft") {
@@ -82,8 +83,10 @@ export default function App() {
       case 3:
         return "Take the Quiz →";
       case 4:
-        return "Make a Wish 🎂 →";
+        return "Down Memory Lane 📸 →";
       case 5:
+        return "Make a Wish 🎂 →";
+      case 6:
         return "One Last Thing 🎁 →";
       default:
         return "Next Story →";
@@ -128,23 +131,27 @@ export default function App() {
           )}
 
           {currentStep === 5 && (
-            <Step6Wish onNext={handleNext} />
+            <Step5Memories onNext={handleNext} />
           )}
 
           {currentStep === 6 && (
+            <Step6Wish onNext={handleNext} />
+          )}
+
+          {currentStep === 7 && (
             <Step7Surprise onReplay={handleReplay} />
           )}
         </main>
 
         {/* Thumb-friendly Bottom Navigation */}
-        {currentStep > 1 && currentStep < 6 && (
+        {currentStep > 1 && currentStep < 7 && (
           <NavigationControls
             currentStep={currentStep}
             totalSteps={TOTAL_STEPS}
             onPrev={handlePrev}
             onNext={handleNext}
             nextLabel={getNextLabel()}
-            hideNext={currentStep === 4 || currentStep === 5} // On step 4 (Quiz) and 5 (Make a Wish), user must interact with the stage
+            hideNext={currentStep === 4 || currentStep === 6} // On step 4 (Quiz) and 6 (Make a Wish), user must interact with stage
           />
         )}
       </div>

@@ -146,7 +146,7 @@ export default function Step5Quiz({ onCompleteQuiz }) {
                 className="quiz-continue-btn glow-effect"
                 onClick={handleProceedNow}
               >
-                Proceed to Make a Wish 🎂 →
+                {quizSection.result?.buttonText || "Walk Down Memory Lane 📸 →"}
               </button>
             </div>
           )}

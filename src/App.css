@@ -237,6 +237,21 @@
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
 }
 
+.start-line-gate.gate-waiting-pulse {
+  animation: startGatePulse 1.3s ease-in-out infinite alternate;
+}
+
+@keyframes startGatePulse {
+  0% {
+    transform: translateY(-50%) scale(1);
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+  }
+  100% {
+    transform: translateY(-50%) scale(1.35) rotate(-10deg);
+    filter: drop-shadow(0 0 10px rgba(255, 209, 102, 0.95));
+  }
+}
+
 /* Track step milestones */
 .track-milestones {
   position: absolute;
@@ -587,6 +602,168 @@
   padding: 12px 6px;
   width: 100%;
   max-width: 360px;
+}
+
+/* ==========================================================================
+   STEP 1: HERO BIKER & START RIDE ANIMATION 🏍️💨 (CRISP, ZERO-LAG, SMOOTH GLIDE)
+   ========================================================================== */
+
+.welcome-hero-biker-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  padding-top: 22px;
+  cursor: pointer;
+  user-select: none;
+  z-index: 30;
+  transform-origin: center center;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.welcome-hero-biker-wrap:hover {
+  transform: scale(1.03);
+}
+
+.welcome-hero-biker-wrap:active {
+  transform: scale(0.97);
+}
+
+/* While gliding to the track: disable drop-shadow and rumble to stay 100% crisp and lag-free */
+.welcome-hero-biker-wrap.is-riding-to-track {
+  pointer-events: none;
+  z-index: 60;
+}
+
+.welcome-hero-biker-wrap.is-riding-to-track .hero-biker-img {
+  animation: none !important;
+  filter: none !important;
+}
+
+.welcome-hero-biker-wrap.is-riding-to-track .hero-biker-speech-bubble,
+.welcome-hero-biker-wrap.is-riding-to-track .hero-biker-shadow,
+.welcome-hero-biker-wrap.is-riding-to-track .hero-biker-glow-orb,
+.welcome-hero-biker-wrap.is-riding-to-track .hero-biker-smoke {
+  opacity: 0 !important;
+  transition: opacity 0.1s ease-out !important;
+}
+
+/* Speech bubble above Sai Bharath */
+.hero-biker-speech-bubble {
+  position: absolute;
+  top: 0px;
+  background: rgba(35, 27, 24, 0.94);
+  color: #FFFFFF;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 3px 11px;
+  border-radius: 999px;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 209, 102, 0.6);
+  animation: heroSpeechBubbleBob 2s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.hero-biker-speech-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 4px 4px 0;
+  border-style: solid;
+  border-color: rgba(35, 27, 24, 0.94) transparent transparent;
+}
+
+@keyframes heroSpeechBubbleBob {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-3px); }
+}
+
+/* Warm golden radiant glow (pure CSS gradient, no blur filter for 60fps) */
+.hero-biker-glow-orb {
+  position: absolute;
+  width: 140px;
+  height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 209, 102, 0.42) 0%, rgba(244, 122, 74, 0.16) 45%, transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Motorcycle frame & image */
+.hero-biker-frame {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.hero-biker-img {
+  width: 125px;
+  max-width: 130px;
+  height: auto;
+  object-fit: contain;
+  /* Flip horizontally so rider faces right into the journey */
+  transform: scaleX(-1);
+  filter: drop-shadow(0 4px 10px rgba(43, 33, 30, 0.22));
+  animation: heroBikerRumble 0.2s ease-in-out infinite alternate;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+@keyframes heroBikerRumble {
+  0% {
+    transform: scaleX(-1) translateY(0);
+  }
+  100% {
+    transform: scaleX(-1) translateY(-2px);
+  }
+}
+
+/* Trailing exhaust smoke puff */
+.hero-biker-smoke {
+  position: absolute;
+  left: -14px;
+  bottom: 6px;
+  font-size: 1.1rem;
+  opacity: 0.8;
+  animation: heroSmokeIdle 0.8s ease-out infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes heroSmokeIdle {
+  0% {
+    transform: scale(0.6) translate(0, 0);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.1) translate(-6px, -4px);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.4) translate(-14px, -8px);
+    opacity: 0;
+  }
+}
+
+/* Ground contact shadow */
+.hero-biker-shadow {
+  width: 100px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(43, 33, 30, 0.28) 0%, rgba(43, 33, 30, 0.06) 60%, transparent 80%);
+  margin-top: -5px;
+  z-index: 1;
 }
 
 .welcome-greeting {
@@ -2894,5 +3071,517 @@
   font-weight: 600;
 }
 
+/* ==========================================================================
+   STEP 5: MEMORIES SHOWCASE (ONE BY ONE INTERACTIVE GALLERY)
+   ========================================================================== */
 
+.step-memories-showcase {
+  position: relative;
+  width: 100%;
+}
+
+/* Stories segmented progress tracker at top */
+.stories-progress-tracker {
+  display: flex;
+  gap: 5px;
+  width: 100%;
+  margin: 6px 0 12px;
+}
+
+.story-bar-segment {
+  flex: 1;
+  height: 4px;
+  background-color: rgba(67, 48, 43, 0.12);
+  border-radius: 2px;
+  border: none;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.18s ease;
+}
+
+.story-bar-segment:hover {
+  transform: scaleY(1.5);
+}
+
+.story-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--peach-500) 0%, var(--coral-500) 100%);
+  width: 0%;
+  border-radius: 2px;
+  transition: width 0.2s ease;
+}
+
+.story-bar-segment.is-completed .story-bar-fill {
+  width: 100%;
+}
+
+.story-bar-segment.is-active .story-bar-fill {
+  width: 100%;
+  animation-name: storyFillProgress;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes storyFillProgress {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+/* Memories top toolbar */
+.memories-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.memory-step-indicator {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.mem-step-pill {
+  font-size: 0.775rem;
+  font-weight: 800;
+  color: var(--peach-600);
+  background-color: var(--peach-50);
+  border: 1px solid var(--peach-200);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  letter-spacing: -0.01em;
+}
+
+.mem-step-total {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.memories-tool-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tool-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background-color: #FFFFFF;
+  border: 1px solid rgba(220, 208, 198, 0.7);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  box-shadow: 0 1px 3px rgba(67, 48, 43, 0.05);
+  cursor: pointer;
+  transition: transform 0.16s ease, background-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.tool-action-btn:hover {
+  transform: translateY(-1px);
+  background-color: var(--peach-50);
+  color: var(--peach-600);
+  box-shadow: 0 3px 6px rgba(244, 122, 74, 0.15);
+}
+
+.tool-action-btn.is-playing {
+  background-color: var(--peach-500);
+  color: #FFFFFF;
+  border-color: var(--peach-500);
+}
+
+.tool-love-btn {
+  background-color: #FFF2F2;
+  color: #E63946;
+  border-color: rgba(230, 57, 70, 0.25);
+}
+
+.tool-love-btn:hover {
+  background-color: #FFE3E3;
+  color: #D62828;
+  transform: translateY(-1px) scale(1.04);
+}
+
+.tool-love-btn:active {
+  transform: scale(0.95);
+}
+
+.tool-icon-only {
+  padding: 4px 8px;
+}
+
+/* ==========================================================================
+   POLAROID STAGE & 3D PERSPECTIVE FLIP
+   ========================================================================== */
+
+.memory-stage-viewport {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 4px 0 14px;
+  perspective: 1200px;
+}
+
+/* Ambient glow orb behind the photo */
+.memory-dynamic-glow {
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  filter: blur(75px);
+  opacity: 0.38;
+  pointer-events: none;
+  z-index: 1;
+  transition: background-color 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Floating Love Reaction Hearts */
+.floating-love-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 40;
+  overflow: hidden;
+}
+
+.floating-heart-particle {
+  position: absolute;
+  bottom: 24px;
+  font-size: 1.8rem;
+  user-select: none;
+  animation: floatUpHeart 1.6s cubic-bezier(0.2, 0.8, 0.4, 1) forwards;
+  filter: drop-shadow(0 4px 8px rgba(255, 107, 107, 0.4));
+}
+
+@keyframes floatUpHeart {
+  0% {
+    transform: translate(0, 0) scale(0.5) rotate(0deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+    transform: translate(0, -25px) scale(1.25) rotate(var(--rot, 0deg));
+  }
+  75% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(0, var(--offset-y, -90px)) scale(1.4) rotate(calc(var(--rot, 0deg) * 2));
+    opacity: 0;
+  }
+}
+
+/* Clean Auto-Animated Card Wrapper */
+.memory-clean-card-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 330px;
+  z-index: 10;
+}
+
+.memory-photo-flipper {
+  width: 100%;
+  background: #FFFFFF;
+  border-radius: var(--radius-lg);
+  padding: 10px;
+  box-shadow: 0 16px 36px rgba(67, 48, 43, 0.12), 0 3px 10px rgba(67, 48, 43, 0.05);
+  border: 1px solid rgba(230, 218, 208, 0.8);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* Slide in transitions when advancing */
+.memory-photo-flipper.slide-dir-next {
+  animation: photoSlideNext 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.memory-photo-flipper.slide-dir-prev {
+  animation: photoSlidePrev 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes photoSlideNext {
+  0% {
+    opacity: 0.35;
+    transform: translateX(36px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0px) scale(1);
+  }
+}
+
+@keyframes photoSlidePrev {
+  0% {
+    opacity: 0.35;
+    transform: translateX(-36px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0px) scale(1);
+  }
+}
+
+/* Photo Frame Container */
+.polaroid-main-frame {
+  position: relative;
+  width: 100%;
+  height: 350px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: #1A1412;
+}
+
+@media (min-width: 480px) {
+  .polaroid-main-frame {
+    height: 395px;
+  }
+}
+
+.polaroid-main-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Smooth continuous Ken Burns auto-animation */
+.polaroid-main-img.is-auto-animating {
+  animation: autoKenBurns 6.5s ease-in-out infinite alternate;
+}
+
+@keyframes autoKenBurns {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  50% {
+    transform: scale(1.06) translate(-1.2%, -1%);
+  }
+  100% {
+    transform: scale(1.03) translate(1%, 0.8%);
+  }
+}
+
+.polaroid-photo-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle, transparent 65%, rgba(20, 10, 8, 0.24) 100%);
+}
+
+/* Quick-tap heart reaction on bottom-right of photo */
+.photo-heart-overlay-btn {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-full);
+  padding: 5px 11px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.16s ease, background-color 0.16s ease;
+}
+
+.photo-heart-overlay-btn:active {
+  transform: scale(1.2);
+}
+
+.photo-heart-overlay-btn .heart-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.photo-heart-overlay-btn .heart-count-pill {
+  font-size: 0.725rem;
+  font-weight: 800;
+  color: #E63946;
+}
+
+/* Left / Right Side Floating Nav Arrows */
+.memory-side-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(220, 208, 198, 0.8);
+  box-shadow: 0 4px 12px rgba(67, 48, 43, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  z-index: 25;
+  transition: transform 0.18s ease, background-color 0.18s ease, color 0.18s ease;
+  line-height: 1;
+}
+
+.memory-side-nav-btn:hover {
+  background-color: var(--peach-500);
+  color: #FFFFFF;
+  border-color: var(--peach-500);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.memory-side-nav-btn.nav-prev {
+  left: -12px;
+}
+
+.memory-side-nav-btn.nav-next {
+  right: -12px;
+}
+
+@media (min-width: 480px) {
+  .memory-side-nav-btn.nav-prev {
+    left: -20px;
+  }
+  .memory-side-nav-btn.nav-next {
+    right: -20px;
+  }
+}
+
+
+
+
+
+
+/* ==========================================================================
+   FULLSCREEN HIGH-RES LIGHTBOX MODAL
+   ========================================================================== */
+
+.memory-lightbox-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(18, 12, 10, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeInLightbox 0.25s ease;
+}
+
+@keyframes fadeInLightbox {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.lightbox-modal-content {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  background: #1C1412;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.lightbox-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+  border: none;
+  color: #FFFFFF;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: background-color 0.18s ease, transform 0.18s ease;
+}
+
+.lightbox-close-btn:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(1.1);
+}
+
+.lightbox-image-wrap {
+  width: 100%;
+  height: 340px;
+  background: #0E0908;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-image-wrap .lightbox-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.lightbox-details {
+  padding: 16px 18px;
+  background: #241A17;
+  color: #FFFFFF;
+}
+
+.lightbox-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin-bottom: 6px;
+}
+
+.lightbox-desc {
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.lightbox-nav-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 18px;
+  background: #1C1412;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.lightbox-nav-btn {
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: #FFFFFF;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.16s ease;
+}
+
+.lightbox-nav-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.lightbox-counter {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 600;
+}
 

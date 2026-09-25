@@ -5,6 +5,7 @@ const STAGE_TITLES = [
   "Legends",
   "Why So Sweet",
   "Quiz",
+  "Memories",
   "Make a Wish",
   "One Last Thing",
 ];
@@ -14,13 +15,14 @@ const RIDER_MESSAGES = [
   "Full throttle! ⚡",
   "Cruising in style! 😎",
   "Quiz time boost! 🚀",
+  "Sweet memories! 📸✨",
   "Cake reached! 🏆🎉",
   "Time for a surprise! 🎁",
 ];
 
 export default function ProgressBar({
   currentStep,
-  totalSteps = 6,
+  totalSteps = 7,
   onStepClick,
   isMuted,
   onToggleMute,
@@ -28,13 +30,13 @@ export default function ProgressBar({
   // Calculate motorcycle progress along track (2% to ~78% so front wheel reaches cake at 88%)
   const riderPosition = useMemo(() => {
     if (currentStep <= 1) return 2;
-    if (currentStep >= 5) return 78; // Reach the cake at Make a Wish
+    if (currentStep >= 6) return 78; // Reach the cake at Make a Wish (step 6)
     // Map intermediate steps smoothly
-    const ratio = (currentStep - 1) / (5 - 1);
+    const ratio = (currentStep - 1) / (6 - 1);
     return Math.min(78, 2 + ratio * 76);
   }, [currentStep]);
 
-  const hasReachedCake = currentStep >= 5;
+  const hasReachedCake = currentStep >= 6;
 
   return (
     <header className="story-header" role="banner">
@@ -77,7 +79,7 @@ export default function ProgressBar({
           <div className="road-center-stripes" aria-hidden="true" />
 
           {/* Starting Line Gate */}
-          <div className="start-line-gate" title="Start Line">
+          <div className={`start-line-gate ${currentStep === 1 ? "gate-waiting-pulse" : ""}`} title="Start Line">
             <span className="gate-flag">🏁</span>
           </div>
 
@@ -112,7 +114,14 @@ export default function ProgressBar({
           {/* Sai Barath on his Royal Enfield Motorcycle */}
           <div
             className={`rider-vehicle-wrap ${currentStep > 1 ? "is-accelerating" : ""}`}
-            style={{ left: `${riderPosition}%` }}
+            style={{
+              left: `${riderPosition}%`,
+              opacity: currentStep === 1 ? 0 : 1,
+              pointerEvents: currentStep === 1 ? "none" : "auto",
+              transition: currentStep === 1
+                ? "none"
+                : "left 0.75s cubic-bezier(0.34, 1.35, 0.64, 1), opacity 0.2s ease",
+            }}
           >
             {/* Speed speech bubble */}
             <div className="rider-speech-bubble" aria-hidden="true">
@@ -127,7 +136,7 @@ export default function ProgressBar({
             {/* Royal Enfield Bullet Rider Image */}
             <img
               src="/images/rider-bullet.png"
-              alt="Sai Barath on Royal Enfield"
+              alt="Sai Bharath on Royal Enfield"
               className="rider-bullet-img"
             />
           </div>

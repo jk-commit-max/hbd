@@ -64,42 +64,58 @@ export default function Step6Wish({ onNext }) {
 
       const source = ctx.createMediaStreamSource(stream);
       const analyser = ctx.createAnalyser();
-      analyser.fftSize = 256;
-      analyser.smoothingTimeConstant = 0.25;
+      analyser.fftSize = 512;
+      analyser.smoothingTimeConstant = 0.2;
       source.connect(analyser);
       analyserRef.current = analyser;
 
       setMicState("listening");
 
-      const bufferLength = analyser.frequencyBinCount;
-      const dataArray = new Uint8Array(bufferLength);
+      const freqArray = new Uint8Array(analyser.frequencyBinCount);
+      const timeArray = new Uint8Array(analyser.fftSize);
       let sustainedBlow = 0;
 
       const detectBlow = () => {
         if (!analyserRef.current) return;
-        analyser.getByteFrequencyData(dataArray);
+        analyser.getByteFrequencyData(freqArray);
+        analyser.getByteTimeDomainData(timeArray);
 
-        // Direct breath on the capsule creates strong low-frequency acoustic saturation (bins 1 to 10)
-        let lowEnergy = 0;
-        for (let i = 1; i <= 10; i++) {
-          lowEnergy += dataArray[i];
+        // 1. Time-Domain Peak-to-Peak Wave Amplitude
+        // Strong direct breath creates physical diaphragm displacement (rail-to-rail swings)
+        let minVal = 255;
+        let maxVal = 0;
+        for (let i = 0; i < timeArray.length; i++) {
+          if (timeArray[i] < minVal) minVal = timeArray[i];
+          if (timeArray[i] > maxVal) maxVal = timeArray[i];
         }
-        const avgLow = lowEnergy / 10;
+        const peakToPeak = maxVal - minVal; // Normal sounds: 20-70. Strong blow: 150-250.
 
-        // Threshold: Ambient room noise is ~10-40, blowing hits 80-220
-        const level = Math.min(1, Math.max(0, (avgLow - 45) / 120));
-        setBlowLevel(level);
+        // 2. Frequency-Domain Low-Frequency Aerodynamic Saturation (bins 1 to 12)
+        let lowEnergy = 0;
+        for (let i = 1; i <= 12; i++) {
+          lowEnergy += freqArray[i];
+        }
+        const avgLow = lowEnergy / 12; // Normal sounds: 20-60. Strong blow: 120-220.
 
-        // Require sustained firm breath for ~150ms to extinguish (prevents false triggers)
-        if (level > 0.6) {
+        // High baseline cutoff filters out background noise, speech, and small sounds completely:
+        // Must exceed 85 on peak-to-peak AND 95 on low frequency
+        const p2pScore = Math.min(1, Math.max(0, (peakToPeak - 85) / 125));
+        const lowScore = Math.min(1, Math.max(0, (avgLow - 95) / 115));
+
+        // Combined strong blow metric (both physical capsule turbulence AND acoustic energy)
+        const strongBlowPower = p2pScore * 0.55 + lowScore * 0.45;
+        setBlowLevel(strongBlowPower);
+
+        // Require blowing VERY STRONGLY (power > 0.82) sustained for ~250ms (15 frames)
+        if (strongBlowPower > 0.82) {
           sustainedBlow++;
-          if (sustainedBlow >= 4) {
+          if (sustainedBlow >= 15) {
             handleBlowCandle();
             stopMicrophone();
             return;
           }
         } else {
-          sustainedBlow = Math.max(0, sustainedBlow - 1);
+          sustainedBlow = Math.max(0, sustainedBlow - 2);
         }
 
         animFrameRef.current = requestAnimationFrame(detectBlow);
@@ -357,12 +373,16 @@ export default function Step6Wish({ onNext }) {
                       <div className="mic-live-header">
                         <span className="mic-live-pulse-dot" />
                         <span className="mic-live-title">
-                          {blowLevel > 0.35 ? "Blowing strong! Keep going! 🌬️" : "Listening… Blow into your mic! 🌬️"}
+                          {blowLevel > 0.75
+                            ? "YES! KEEP BLOWING HARD! 🔥"
+                            : blowLevel > 0.35
+                            ? "Harder! Give it all your breath! 💨"
+                            : "Blow VERY strongly into mic! 🌬️"}
                         </span>
                       </div>
                       <div className="mic-meter-track" title="Breath intensity">
                         <div
-                          className="mic-meter-fill"
+                          className={`mic-meter-fill ${blowLevel > 0.75 ? "meter-critical" : ""}`}
                           style={{ width: `${Math.round(blowLevel * 100)}%` }}
                         />
                       </div>

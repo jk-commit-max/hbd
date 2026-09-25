@@ -29,7 +29,7 @@ export const birthdayConfig = {
     greeting: "Hey",
     title: "This little website is 100% about you.",
     subtitle: "And yes… you have absolutely no escape. 😌",
-    buttonText: "Enter Your Birthday Story",
+    buttonText: "Start the Journey",
     // hint: "Sound on for the best experience 🎧",
   },
 

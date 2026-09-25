@@ -114,7 +114,7 @@ export default function Step1Welcome({ onStart }) {
             type="button"
             className="action-button-large glow-effect"
             onClick={handleStartRide}
-            aria-label="Enter your birthday story"
+            aria-label="Start the journey"
           >
             <span>{isRiding ? "Riding to track… 🏍️💨" : intro.buttonText}</span>
             <span className="btn-arrow" aria-hidden="true">→</span>

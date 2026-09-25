@@ -272,9 +272,8 @@ export default function Step5Memories({ onNext }) {
                   fallbackText="Memory"
                   fallbackGradient="linear-gradient(135deg, #FFE5D9 0%, #FFFFFF 100%)"
                   className="polaroid-main-img is-auto-animating"
-                  style={{
-                    objectPosition: currentMem.objectPosition || "center center",
-                  }}
+                  objectFit={currentMem.objectFit || "cover"}
+                  objectPosition={currentMem.objectPosition || "center center"}
                 />
 
                 {/* Subtle vignette lens overlay */}

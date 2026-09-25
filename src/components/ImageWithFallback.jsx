@@ -8,6 +8,8 @@ export default function ImageWithFallback({
   fallbackGradient = "linear-gradient(135deg, #FFE5D9 0%, #FFCAD4 100%)",
   className = "",
   objectPosition = "center 15%",
+  objectFit = "cover",
+  style = {},
 }) {
   const [hasError, setHasError] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -38,7 +40,7 @@ export default function ImageWithFallback({
         src={src}
         alt={alt}
         className={`loaded-image ${isLoaded ? "is-visible" : "is-hidden"}`}
-        style={{ objectPosition }}
+        style={{ objectPosition, objectFit, ...style }}
         onLoad={() => setIsLoaded(true)}
         onError={() => setHasError(true)}
         loading="lazy"
